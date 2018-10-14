@@ -1,2 +1,2 @@
 # makOS
-OS development
+Repository for OS development
