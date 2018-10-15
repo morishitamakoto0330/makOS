@@ -34,8 +34,10 @@
 ; メッセージ部分
 
 		DB		0x0a, 0x0a		; 改行を2つ
-		DB		"hello, world"
+		DB		"hello, world!"
 		DB		0x0a			; 改行
+		DB		"this is makOS!!"
+		DB		0x0a
 		DB		0
 
 		RESB	0x1fe-$			; 0x001feまでを0x00で埋める命令
