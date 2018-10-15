@@ -34,7 +34,7 @@
 ; メッセージ部分
 
 		DB		0x0a, 0x0a		; 改行を2つ
-		DB		"hello, world!"
+		DB		"Hello, World!"
 		DB		0x0a			; 改行
 		DB		"this is makOS!!"
 		DB		0x0a
