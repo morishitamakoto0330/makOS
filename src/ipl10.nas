@@ -185,6 +185,7 @@ next:
 	JB		readloop				; CH < CYLS ‚¾‚Á‚½‚çreadloop
 
 ; “Ç‚ÝI‚í‚Á‚½‚Ì‚Åharibote.sys‚ðŽÀs
+	MOV		[0x0ff0],CH				; IPL‚ª‚Ç‚±‚Ü‚Å“Ç‚ñ‚¾‚Ì‚©‚ðƒƒ‚
 	JMP		0xc200
 
 fin:
@@ -211,7 +212,6 @@ msg:
 	RESB	0x7dfe-$				; 0x17dfe‚Ü‚Å‚ð0x00‚Å–„‚ß‚é–½—ß
 
 	DB		0x55, 0xaa
-;	RESB 	0x600
 	RESB 	0x10600
 
 
