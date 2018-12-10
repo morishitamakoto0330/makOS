@@ -1,0 +1,142 @@
+[FORMAT "WCOFF"]
+[INSTRSET "i486p"]
+[OPTIMIZE 1]
+[OPTION 1]
+[BITS 32]
+	EXTERN	_io_out8
+	EXTERN	_fifo8_put
+[FILE "timer.c"]
+[SECTION .text]
+	GLOBAL	_init_pit
+_init_pit:
+	PUSH	EBP
+	MOV	EBP,ESP
+	PUSH	52
+	PUSH	67
+	CALL	_io_out8
+	PUSH	156
+	PUSH	64
+	CALL	_io_out8
+	PUSH	46
+	PUSH	64
+	CALL	_io_out8
+	MOV	EDX,_timerctl+7996
+	MOV	DWORD [_timerctl],0
+	MOV	DWORD [_timerctl+4],-1
+	ADD	ESP,24
+	MOV	EAX,_timerctl+12
+L6:
+	MOV	DWORD [EAX],0
+	ADD	EAX,16
+	CMP	EAX,EDX
+	JLE	L6
+	LEAVE
+	RET
+	GLOBAL	_timer_alloc
+_timer_alloc:
+	PUSH	EBP
+	XOR	EDX,EDX
+	MOV	EBP,ESP
+	MOV	EAX,_timerctl+8
+L15:
+	CMP	DWORD [4+EAX],0
+	JE	L18
+	INC	EDX
+	ADD	EAX,16
+	CMP	EDX,499
+	JLE	L15
+	XOR	EAX,EAX
+L9:
+	POP	EBP
+	RET
+L18:
+	MOV	DWORD [4+EAX],1
+	JMP	L9
+	GLOBAL	_timer_free
+_timer_free:
+	PUSH	EBP
+	MOV	EBP,ESP
+	MOV	EAX,DWORD [8+EBP]
+	MOV	DWORD [4+EAX],0
+	POP	EBP
+	RET
+	GLOBAL	_timer_init
+_timer_init:
+	PUSH	EBP
+	MOV	EBP,ESP
+	MOV	EAX,DWORD [8+EBP]
+	MOV	EDX,DWORD [12+EBP]
+	MOV	DWORD [8+EAX],EDX
+	MOV	EDX,DWORD [16+EBP]
+	MOV	BYTE [12+EAX],DL
+	POP	EBP
+	RET
+	GLOBAL	_timer_settime
+_timer_settime:
+	PUSH	EBP
+	MOV	EDX,DWORD [_timerctl]
+	MOV	EBP,ESP
+	ADD	EDX,DWORD [12+EBP]
+	MOV	EAX,DWORD [8+EBP]
+	MOV	DWORD [EAX],EDX
+	MOV	DWORD [4+EAX],2
+	CMP	DWORD [_timerctl+4],EDX
+	JBE	L21
+	MOV	DWORD [_timerctl+4],EDX
+L21:
+	POP	EBP
+	RET
+	GLOBAL	_inthandler20
+_inthandler20:
+	PUSH	EBP
+	MOV	EBP,ESP
+	PUSH	ESI
+	PUSH	EBX
+	PUSH	96
+	PUSH	32
+	CALL	_io_out8
+	POP	ECX
+	MOV	EAX,DWORD [_timerctl]
+	POP	EBX
+	INC	EAX
+	MOV	DWORD [_timerctl],EAX
+	CMP	DWORD [_timerctl+4],EAX
+	JA	L23
+	MOV	DWORD [_timerctl+4],-1
+	XOR	EBX,EBX
+	MOV	ESI,499
+L33:
+	CMP	DWORD [_timerctl+12+EBX],2
+	JE	L35
+L27:
+	ADD	EBX,16
+	DEC	ESI
+	JNS	L33
+L23:
+	LEA	ESP,DWORD [-8+EBP]
+	POP	EBX
+	POP	ESI
+	POP	EBP
+	RET
+L35:
+	MOV	EAX,DWORD [_timerctl+8+EBX]
+	CMP	EAX,DWORD [_timerctl]
+	JBE	L36
+	CMP	DWORD [_timerctl+4],EAX
+	JBE	L27
+	MOV	DWORD [_timerctl+4],EAX
+	JMP	L27
+L36:
+	MOVZX	EAX,BYTE [_timerctl+20+EBX]
+	PUSH	EAX
+	PUSH	DWORD [_timerctl+16+EBX]
+	MOV	DWORD [_timerctl+12+EBX],1
+	CALL	_fifo8_put
+	POP	EAX
+	POP	EDX
+	JMP	L27
+	GLOBAL	_timerctl
+[SECTION .data]
+	ALIGNB	16
+_timerctl:
+	RESB	8008
