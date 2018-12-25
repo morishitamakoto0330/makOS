@@ -1,5 +1,6 @@
 OBJS_BOOTPACK	= bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
-				  int.obj fifo.obj mouse.obj keyboard.obj memory.obj sheet.obj timer.obj
+				  int.obj fifo.obj mouse.obj keyboard.obj memory.obj sheet.obj timer.obj \
+				  mtask.obj
 
 TOOLPATH		= C:\Users\moris\Desktop\makOS\tools
 INCPATH			= C:\Users\moris\Desktop\makOS\tools\haribote
@@ -100,6 +101,12 @@ timer.nas:	timer.gas
 		$(GAS2NASK) timer.gas timer.nas
 timer.obj:	timer.nas
 		$(NASK) timer.nas timer.obj timer.lst
+mtask.gas:	mtask.c
+		$(CC1) -o mtask.gas mtask.c
+mtask.nas:	mtask.gas 
+		$(GAS2NASK) mtask.gas mtask.nas
+mtask.obj:	mtask.nas
+		$(NASK) mtask.nas mtask.obj mtask.lst
 
 
 
